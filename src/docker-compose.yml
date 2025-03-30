@@ -1,6 +1,6 @@
 services:
   catalogdb:
-    image: postgres
+    image: postgres:16.8-alpine3.20
     build:
         dockerfile: Services/Catalog/Catalog.API/Dockerfile
 
