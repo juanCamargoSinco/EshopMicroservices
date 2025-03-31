@@ -6,8 +6,26 @@
 
     public record CreateProductResult(Guid Id);
 
+    //A pesar de que se llama CreateProductComandHandler,
+    //se ejecuta primero esta clase como un Pipeline Behavior antes de que se ejecute
+    //el metodo Handle de CreateProductComandHandler
+    //al acabar si continua con todo el codigo del metodo Handle
+    public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+    {
 
-    internal class CreateProductComandHandler(IDocumentSession session)
+        public CreateProductCommandValidator()
+        {
+            RuleFor(x  => x.Name).NotEmpty().WithMessage("El nombre es requerido");
+            RuleFor(x => x.Category).NotEmpty().WithMessage("La categoria es requerida");
+            RuleFor(x => x.ImageFile).NotEmpty().WithMessage("La imagen es requerida");
+            RuleFor(x => x.Price).GreaterThan(0).WithMessage("El precio debe ser mayor a 0");
+        }
+
+    }
+
+
+    internal class CreateProductComandHandler
+        (IDocumentSession session)
         : ICommandHandler<CreateProductCommand, CreateProductResult>
     {
         public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)

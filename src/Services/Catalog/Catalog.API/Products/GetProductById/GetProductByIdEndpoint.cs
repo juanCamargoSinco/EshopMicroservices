@@ -1,5 +1,6 @@
 ﻿namespace Catalog.API.Products.GetProductById
 {
+    //Es buena practica siempre definir Request y Response en el endpoint aunque no se use
     //public record GetProductByIdRequest();
     public record GetProductByIdResponse(Product Product);
     public class GetProductByIdEndpoint : ICarterModule

@@ -1,8 +1,14 @@
 services:
   catalogdb:
     image: postgres:16.8-alpine3.20
+    # build:
+    #     dockerfile: Services/Catalog/Catalog.API/Dockerfile
+
+  catalog.api:
+    image: ${DOCKER_REGISTRY-}catalogapi
     build:
-        dockerfile: Services/Catalog/Catalog.API/Dockerfile
+      context: .
+      dockerfile: Services/Catalog/Catalog.API/Dockerfile
 
 volumes:
   postgres_catalog:

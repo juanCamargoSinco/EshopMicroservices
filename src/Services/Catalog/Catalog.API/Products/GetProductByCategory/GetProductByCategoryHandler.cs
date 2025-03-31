@@ -6,13 +6,11 @@
     public record GetProductByCategoryResult(IEnumerable<Product> Products);
 
     internal class GetProductByCategoryQueryHandler
-        (IDocumentSession session, ILogger<GetProductByCategoryQueryHandler> logger)
+        (IDocumentSession session)
         : IQueryHandler<GetProductByCategoryQuery, GetProductByCategoryResult>
     {
         public async Task<GetProductByCategoryResult> Handle(GetProductByCategoryQuery query, CancellationToken cancellationToken)
         {
-            logger.LogInformation("GetProductByCategoryQueryHandler.Handle llamado con {@Query}", query);
-
             var products = await session.Query<Product>().Where(x => x.Category.Contains(query.Category))
                 .ToListAsync(cancellationToken);
                         
