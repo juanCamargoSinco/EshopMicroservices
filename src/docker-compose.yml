@@ -4,6 +4,9 @@ services:
     # build:
     #     dockerfile: Services/Catalog/Catalog.API/Dockerfile
 
+  basketdb:
+    image: postgres:16.8-alpine3.20
+
   catalog.api:
     image: ${DOCKER_REGISTRY-}catalogapi
     build:
@@ -12,3 +15,4 @@ services:
 
 volumes:
   postgres_catalog:
+  postgres_basket:

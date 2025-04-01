@@ -2,15 +2,15 @@
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
 var assembly = typeof(Program).Assembly;
+// Add services to the container
 
 //MediatR se usa para implementar el patron mediator, facilitando CQRS y para separar querys y commands
 //Endpoint son los puntos de entrada
 //Handler son los manejadores los que hacen la logica
 builder.Services.AddMediatR(config =>
 {
-
+    //Se activa mediatR en el asembly actual
     config.RegisterServicesFromAssembly(assembly);
     //Añade el comportamiento de pipeline behavior en MediatR
     //typeof(ValidationBehavior<,>) Especifica el tipo genérico ValidationBehavior que acepta dos parámetros genéricos.
@@ -28,7 +28,7 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 //Carter sirve para extender el funcionamiento/mapeo de las minimal apis
 builder.Services.AddCarter();
 
-//Marten permite manejar postres como una BD de documentos para almacenar json
+//Marten permite manejar postresql como una BD de documentos para almacenar json
 builder.Services.AddMarten(opts =>
 {
     opts.Connection(builder.Configuration.GetConnectionString("Database")!);
