@@ -54,12 +54,15 @@ services:
     # al usar dos raya al piso se sobreescriben las configuraciones de la aplicacion, en este caso el ConnectionStrings__
       - ConnectionStrings__Database=Server=basketdb;Port=5432;Database=BasketDb;User Id=postgres;Password=postgres;Include Error Detail=true
       - ConnectionStrings__Redis=distributedcache:6379
+      - GrpcSettings__DiscountUrl=http://discount.grpc:8080
+      # - GrpcSettings__DiscountUrl=https://discount.grpc:8081
       # - ASPNETCORE_HTTPS_PORTS=8081
       # - ASPNETCORE_URLS=https://+:8081;http://+:8080
 
     depends_on:
       - basketdb
       - distributedcache
+      - discount.grpc
     ports:
       - "6001:8080"  # HTTP
       - "6061:8081"  # HTTPS
@@ -70,7 +73,7 @@ services:
       - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
 
   discount.grpc:
-    container_name: discountAPI
+    container_name: discountgRPC
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080

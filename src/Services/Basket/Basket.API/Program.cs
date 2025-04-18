@@ -1,3 +1,4 @@
+using Discount.Grpc;
 using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,8 @@ var assembly = typeof(Program).Assembly;
 
 //Antes de hacer build de la aplicacion
 //Adicion de servicios al container con inyeccion de dependecias
+
+//Aplication services
 builder.Services.AddCarter();
 builder.Services.AddMediatR(config =>
 {
@@ -15,7 +18,7 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(LogginBehavior<,>));
 });
 
-
+//Data Services
 builder.Services.AddMarten(opts =>
 {
     opts.Connection(builder.Configuration.GetConnectionString("Database")!);
@@ -36,6 +39,25 @@ builder.Services.AddStackExchangeRedisCache(options =>
     //options.InstanceName = "Basket";
 });
 
+//Grpc Services
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(opt =>
+{
+    opt.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+});
+
+// Configuracion para aceptar cualquier peticion ignorando si el certificado es válido, expirado, autofirmado, desactiva la validación SSL
+//.ConfigurePrimaryHttpMessageHandler(() =>
+// {
+//     var handler = new HttpClientHandler
+//     {
+//         ServerCertificateCustomValidationCallback =
+//         HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+//     };
+
+//     return handler;
+// });
+
+//Cross-Cuting Services
 //Registro de manejador de excepciones personalizadas
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
