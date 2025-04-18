@@ -1,0 +1,51 @@
+//Definicion de la sintaxis que vamos a usar en el protobuffcompiler
+syntax = "proto3";
+
+//Especificacion que indica la generacion de clases c# dentro del namespace especificado
+//Se especifica el espacio de nombres C# donde se generará la clase
+//Con esta opción se define el espacio de nombres (namespace) que tendrán las clases C# generadas a partir de este .proto.
+//Así evitas que el código generado caiga en un nombre de espacio por defecto y mantienes coherencia con tu arquitectura .NET 
+option csharp_namespace = "Discount.Grpc";
+
+//Creacion de package donde se agruparan las definiciones
+//El package agrupa todas las definiciones de servicios y mensajes bajo un mismo prefijo (discount.), 
+//lo que ayuda a evitar colisiones de nombres cuando combinas múltiples .proto en una misma solución
+package discount;
+
+//Definicion del servicio
+service DiscountProtoService{
+	//Definicion de metodos del servicios
+	rpc GetDiscount(GetDiscountRequest) returns (CouponModel);
+	rpc CreateDiscount (CreateDiscountRequest) returns (CouponModel);
+	rpc UpdateDiscount (UpdateDiscountRequest) returns (CouponModel);
+	rpc DeleteDiscount (DeleteDiscountRequest) returns (DeleteDiscountResponse);
+}
+
+//Definicion de modelos de los servicios
+message GetDiscountRequest {
+	string productName = 1;
+}
+
+message CouponModel {
+	//Orden de los parametros
+	int32 id = 1;
+	string productName = 2;
+	string description = 3;
+	int32 amount = 4;
+}
+
+message CreateDiscountRequest {
+	CouponModel coupon = 1;
+}
+
+message UpdateDiscountRequest {
+	CouponModel coupon = 1;
+}
+
+message DeleteDiscountRequest {
+	string productName = 1;
+}
+
+message DeleteDiscountResponse {
+	bool success = 1;
+}

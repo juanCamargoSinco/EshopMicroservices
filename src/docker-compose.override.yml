@@ -12,6 +12,7 @@ services:
       - postgres_catalog:/var/lib/postgresql/data/
 
   catalog.api:
+    container_name: catalogAPI  
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       # - ASPNETCORE_URLS=https://+:8081;http://+:8080
@@ -46,19 +47,39 @@ services:
        - "6379:6379" 
 
   basket.api:
+    container_name: basketAPI
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
     # al usar dos raya al piso se sobreescriben las configuraciones de la aplicacion, en este caso el ConnectionStrings__
       - ConnectionStrings__Database=Server=basketdb;Port=5432;Database=BasketDb;User Id=postgres;Password=postgres;Include Error Detail=true
       - ConnectionStrings__Redis=distributedcache:6379
-    #  - ASPNETCORE_HTTPS_PORTS=8081
+      # - ASPNETCORE_HTTPS_PORTS=8081
+      # - ASPNETCORE_URLS=https://+:8081;http://+:8080
+
     depends_on:
       - basketdb
       - distributedcache
     ports:
       - "6001:8080"  # HTTP
       - "6061:8081"  # HTTPS
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      - ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+
+  discount.grpc:
+    container_name: discountAPI
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      # - ASPNETCORE_HTTPS_PORTS=8081
+      # - ASPNETCORE_URLS=https://+:8081;http://+:8080
+      - ConnectionStrings__DataBase=Data Source=discountdb
+    ports:
+      - "6002:8080"  # HTTP
+      - "6062:8081"  # HTTPS
     volumes:
       - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
       - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro

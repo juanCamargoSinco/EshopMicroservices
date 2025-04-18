@@ -1,4 +1,4 @@
-
+//Catalog y Basket construidas con vertitical architecture
 
 var builder = WebApplication.CreateBuilder(args);
 
