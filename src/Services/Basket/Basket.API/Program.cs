@@ -1,3 +1,5 @@
+using HealthChecks.UI.Client;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var assembly = typeof(Program).Assembly;
@@ -25,8 +27,22 @@ builder.Services.AddMarten(opts =>
 
 //Configuracion de la inyeccion de dependencias de los repositorios
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.Decorate<IBasketRepository, CachedBasketRepository>();
+
+//Configuracion de redis como cache distribuida
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    //options.InstanceName = "Basket";
+});
+
 //Registro de manejador de excepciones personalizadas
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+
+builder.Services.AddHealthChecks()
+    //Configuracion de health check de postgres y redis
+    .AddNpgSql(builder.Configuration.GetConnectionString("Database")!)
+    .AddRedis(builder.Configuration.GetConnectionString("Redis")!);
 
 var app = builder.Build();
 
@@ -37,5 +53,12 @@ var app = builder.Build();
 
 app.MapCarter();
 app.UseExceptionHandler(option => { });
+
+app.UseHealthChecks("/health",
+    //Adicion de respuesta en formato JSON de los healtchecks configurados
+    new HealthCheckOptions
+    {
+        ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+    });
 
 app.Run();
