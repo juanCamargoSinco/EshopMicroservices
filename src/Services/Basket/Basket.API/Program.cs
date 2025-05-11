@@ -1,5 +1,5 @@
+using BuildingBlocks.Messaging.MassTransit;
 using Discount.Grpc;
-using HealthChecks.UI.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,6 +56,10 @@ builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(
 
 //     return handler;
 // });
+
+//Adicion de rabbitmq para publicar mensajes
+//No se añade el assembly ya que este api es el publicdor de eventos no el consumidor
+builder.Services.AddMessageBroker(builder.Configuration);
 
 //Cross-Cuting Services
 //Registro de manejador de excepciones personalizadas
